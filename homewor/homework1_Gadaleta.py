@@ -38,13 +38,7 @@ array2 = np.array([2, 4, 3, 6, 7])
 
 print('NumPy.where(array1 == array2): ', np.where(array1 == array2))
 
-print('''\n\n
-# 8) Create a range of numbers from 0-15 named array1 (15 included). Create another array named
-# array2 which extracts numbers between 4 and 6 from array1 and store them in array2. Print array2. ''')
-array1 = np.arange(16)
-array2 = array1[4:6]
-print('array1[4:6]: ', array2, end=' ')
-print('# so I pull elements from 4:6 which is 4,5 4:7 would also pull 7 if that is what you are looking for')
+
 print('''\n\n
 # 9) Create a rank 2 (3x3) array containing random numbers. Swap columns 1 and 2 in the two dimensional array and
 # print the results. ''')

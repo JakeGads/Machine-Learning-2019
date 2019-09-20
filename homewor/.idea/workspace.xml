@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ca4d691d-1044-4909-be6c-342652ff2510" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/homework1_Gadaleta.py" beforeDir="false" afterPath="$PROJECT_DIR$/homework1_Gadaleta.py" afterDir="false" />
-    </list>
+    <list default="true" id="ca4d691d-1044-4909-be6c-342652ff2510" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,14 +115,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="984" y="28" width="936" height="1052" extended-state="4" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49927327" visible="true" weight="0.31038252" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49927327" weight="0.31038252" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
