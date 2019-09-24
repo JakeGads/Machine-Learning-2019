@@ -11,10 +11,8 @@ print('\n\n# 3) Create a rank 2 (2x2) array containing random numbers.')
 a = np.random.rand(2, 2)
 print(a)
 
-print('\n\n# 4) Extract all event numbers from an array created in question 2.')
-for array in a:
-    for i in array:
-        print(i, end=' ')
+print('\n\n# 4) Extract all even numbers from an array created in question 2.') # Question 1 is this what you wanted?
+print(a[a % 2 == 0], end=' ')
 print()
 
 print('\n\n# 5) Convert the array created in question 2 to a rank 2 array with 2 rows')
@@ -60,15 +58,21 @@ print('''\n\n
 # use of precision and threshold.
 #
 # Q. From the array a, replace all values greater than 30 to 30 and less than 10 to 10. ''')
+
 a = np.array([0, 5, 7, 30, 55, 6, 16, 18])
 print('\n\n', a)
+
+a[a > 30] = 30
+a[a < 10] = 10
 
 myLamda = lambda x: 10 if x < 10 else (30 if x > 30 else x)
 # according to PEP 8 this is to long to be a lamda and instead should be a localized function
 
-vectorizer = np.vectorize(myLamda)
+vectorized = np.vectorize(myLamda)
 
-a = vectorizer(a)
+a = vectorized(a)
+
+np.set_printoptions(precision=4, threshold=10)
 
 print(a)
 
