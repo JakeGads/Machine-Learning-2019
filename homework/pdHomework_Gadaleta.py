@@ -46,3 +46,13 @@ print('\n9. Calculate the frequency of distinct values in df.')
 for col in df.columns:
     print(df.groupby(col).size())
 
+print('\n10. Find all rows where the values of “zn” column is greater than 15.')
+print(df[df.loc[:, 'zn'] > 15])
+
+print('\n11. Display only the “zn” column of the dataframe.')
+print(df['zn'])
+
+print('\n12. Define two conditions – crim is greater than 1.0 and medv is greater than 10.0. '\
+      'Apply these two conditions to the dataframe and show the resulting rows.')
+
+print(df[(df.loc[:, 'crim'] > 1) & (df.loc[:, 'medv'] > 10)])

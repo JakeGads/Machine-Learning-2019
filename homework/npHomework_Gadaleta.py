@@ -1,5 +1,5 @@
-print('# 1) Import NumPy as np and print the version number')
 import numpy as np
+print('# 1) Import NumPy as np and print the version number')
 print(f'NumPy Version: {np.version.version}')
 
 print('\n\n# 2) Create a one-dimensional array of numbers from 0 to 9')
