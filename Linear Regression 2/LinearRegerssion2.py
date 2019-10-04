@@ -63,18 +63,16 @@ for X in Xs:
     counter += 1
     
 
+
+
+
 # For the sake of my sanity we will be starting with a data set
 dataset = pd.read_csv('housing.csv')
+dataset = dataset.dropna()
+dataset = dataset.reset_index(drop = 2)
 
-X=dataset.loc[:, dataset.columns != 'median_house_value']
-y=dataset.loc[:, dataset.columns == 'median_house_value']
-
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-labelencoder_X = LabelEncoder()
-X[:, 8:9] = labelencoder_X.fit_transform(X[:,8:9])
-onehotencoder = OneHotEncoder(categorical_features = [8, 9])
-X = onehotencoder.fit_transform(X).toarray()
-
+X=dataset.iloc[:, :-2].values
+y=dataset.iloc[:, 8:9].values
 
 # Spliting into a training and a test set
 from sklearn.model_selection import train_test_split

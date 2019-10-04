@@ -40,3 +40,4 @@ print("model intercept", model.intercept_)
 print("model cof", model.coef_)
 
 y_pred = model.intercept_ + model.coef_ * x
+    

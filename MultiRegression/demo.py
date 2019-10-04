@@ -7,6 +7,7 @@ y = dataset.iloc[:, 4:5].values
 
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder_X = LabelEncoder()
+
 X[:, 3] = labelencoder_X.fit_transform(X[:,3])
 onehotencoder = OneHotEncoder(categorical_features = [3])
 X = onehotencoder.fit_transform(X).toarray()
