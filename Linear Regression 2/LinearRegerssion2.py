@@ -67,3 +67,37 @@ for X in Xs:
 dataset = pd.read_csv('housing.csv')
 
 X=dataset.loc[:, dataset.columns != 'median_house_value']
+y=dataset.loc[:, dataset.columns == 'median_house_value']
+
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+labelencoder_X = LabelEncoder()
+X[:, 8:9] = labelencoder_X.fit_transform(X[:,8:9])
+onehotencoder = OneHotEncoder(categorical_features = [8, 9])
+X = onehotencoder.fit_transform(X).toarray()
+
+
+# Spliting into a training and a test set
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,  test_size = .25, random_state = 0
+)
+
+from sklearn.linear_model import LinearRegression as LR
+
+regressor = LR()
+regressor.fit(X_train, y_train)
+
+y_pred = regressor.predict(X_test)
+
+regressor.score(X_test, y_test)
+
+plt.plot(X_test, y_test, color='g')
+plt.plot(X_test, y_pred, color='b')
+
+from sklearn.metrics import mean_squared_error
+import math
+regression_model_mse = mean_squared_error(y_pred, y_test)
+regression_model_mse_sq = math.sqrt(regression_model_mse)
+
+print(regression_model_mse_sq)
+plt.savefig('MultiRegression')
