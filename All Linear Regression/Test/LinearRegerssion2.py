@@ -1,7 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression as LR
-
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression as LR
+from sklearn.metrics import mean_squared_error
+import math
 # loads in the csv and cleans the failed the load data
 df = pd.read_csv("housing.csv")
 df = df.dropna()
@@ -75,12 +78,12 @@ X=dataset.iloc[:, :-2].values
 y=dataset.iloc[:, 8:9].values
 
 # Spliting into a training and a test set
-from sklearn.model_selection import train_test_split
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y,  test_size = .25, random_state = 0
 )
 
-from sklearn.linear_model import LinearRegression as LR
+
 
 regressor = LR()
 regressor.fit(X_train, y_train)
@@ -91,9 +94,6 @@ regressor.score(X_test, y_test)
 
 plt.plot(X_test, y_test, color='g')
 plt.plot(X_test, y_pred, color='b')
-
-from sklearn.metrics import mean_squared_error
-import math
 regression_model_mse = mean_squared_error(y_pred, y_test)
 regression_model_mse_sq = math.sqrt(regression_model_mse)
 
