@@ -1,5 +1,5 @@
 import math
-
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.linear_model import LinearRegression as LR
@@ -39,10 +39,24 @@ def linear(file, X, y):
 
     plt.plot(line_X, model.predict(line_X), color = 'r')
 
-    plt.savefig(plt.title(f"{X} vs {y}"))
+    plt.savefig(plt.title(f"Linear {X} vs {y}"))
 
-def multiple(file):
-    None
+def multiple(file,  y, stringCols = []) :
+    data = pd.read_csv(file)
+
+    X = data.loc[:,  data.colums != y].values
+    y = data.loc[: y].values
+
+    for i in stringCols:
+        le = LabelEncoder()
+        X[:, i] = le.fit_transform(X[:, i])
+        onehotencoder = OneHotEncoder(categorical_features = [i])
+        X = onehotencoder.fit_transform(X).toarray()
+
+    
+
+
+
 
 def polynomial(file):
     None

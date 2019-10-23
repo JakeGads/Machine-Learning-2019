@@ -1,4 +1,11 @@
+import math
 
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.linear_model import LinearRegression as LR
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import (LabelEncoder, OneHotEncoder, PolynomialFeatures)
 
 dataset = pd.read_csv('50_Startups.csv')
 X = dataset.iloc[:,:-1].values

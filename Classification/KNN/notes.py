@@ -20,3 +20,5 @@ X_test = sc.transform(X_test)
 
 # fotting knn to the trainging set
 from sklearn.neighbors import KNeighborsClassifier
+classifier = KNeighborsClassifier(n_neighbors = 2, metric = "minkowski", p = 2)
+classifier.fit(X_train, y_train)
