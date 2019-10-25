@@ -24,7 +24,9 @@ lin_reg.fit(X,y)
 # fitting Polynomial Ression to the @staticmethod
 
 poly_reg = PolynomialFeatures(degree=5)
-X_poly = poly_reg.fit_transform(X)
+X_pol = poly_reg.fit_transform(X)
+
+y = poly_reg.fit_transform(X)
 
 poly_reg.fit(X_poly, y)
 lin_reg2 = LinearRegression()
