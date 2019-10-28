@@ -24,19 +24,12 @@ def linear(file, X, y, save=False):
     file (str): The location of the .csv it will read
     X (str): The name of the indenpent col
     y (str): The name of the depenent colum 
-
-   """
+    """
     returner = Data(X, y)
 
     df = pd.read_csv(file)
     df = df.dropna()
     df = df.reset_index(drop=True)
-
-    plt.title(f"{X} vs {y}")
-    plt.xlabel(X)
-    plt.ylabel(y)
-    plt.plot(df[X], df[y], 'c.')
-    plt.grid(True)
 
     line_X = df[X].values
     line_y = df[y].values
@@ -48,9 +41,16 @@ def linear(file, X, y, save=False):
         print("Failed to build ", X)
         return returner
     if save:
+        plt.title(f"{X} vs {y}")
+        plt.xlabel(X)
+        plt.ylabel(y)
+        plt.plot(df[X], df[y], 'c.')
+        plt.grid(True)
         plt.plot(line_X, model.predict(line_X), color='r')
 
         plt.savefig(plt.title(f"Linear {X} vs {y}"))
+
+
 
     returner.value = model.score(X)
     return returner
