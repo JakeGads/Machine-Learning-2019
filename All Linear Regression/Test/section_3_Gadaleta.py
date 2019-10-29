@@ -9,15 +9,55 @@ the data.
 5. Include one graph using polynomial regression with a discussion on what that graph represents.
 """
 
-import regression  # see regression.py for further function defs I use throughout this script
-from regression import Data  # this is for simple reading and writing of data
+import math
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.linear_model import LinearRegression as LR
+from sklearn.preprocessing import (LabelEncoder, OneHotEncoder, PolynomialFeatures)
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
 
 
 def q1():
-    file = "Data/Employee_Compensation_SF.csv"
+    def linear():
+        col = [
+        "Year Type","Year","Organization Group Code","Organization Group","Department Code","Department",
+        "Union Code","Union","Job Family Code","Job Family","Job Code","Job,Employee Identifier","Salaries","Overtime",
+        "Other Salaries","Total Salary","Retirement","Health/Dental","Other Benefits","Total Benefits","Total Compensation"
+        ]
+        file = "Data/Employee_Compensation_SF.csv"
+        X_ = ["Salaries", "Overtime", "Retirement"]
+        X_loc = []
+        for i in X_:
+            for h in range(len(col)):
+                if i == col[h]:
+                    X_loc.append(h)
+                if col[h] == "Health/Dental":
+                    y_loc = h
 
-    X = ["Salaries", "Overtime", "Retirement"]
-    y = "Health/Dental"
+        # y = "Health/Dental"
+        data = pd.read_csv(file)
+        lineY = data.iloc[y_loc].values
+        scores = []
+
+        for X__ in X_loc:
+            lineX = data.iloc[X__].values
+            if not (isinstance(lineX, float) or isinstance(lineX, int)):
+                labelencoder_X = LabelEncoder()
+                lineX[X__] = labelencoder_X.fit_transform(lineX[X__])
+                onehotencoder = OneHotEncoder(categorical_features=[X__])
+                lineX = onehotencoder.fit_transform(X).toarray()
+
+            model = LR()
+            model.fit(lineX, lineY)
+            scores.append(model.score(lineX, lineY))
+
+    linear()
+
+
+
+
 
     # Linear Calculations
 
