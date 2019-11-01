@@ -43,7 +43,43 @@ def knn(file, y):
 
     for i in perm:
         X = dataset.iloc[:, [i[0], i[1]]].values
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+
+        sc = StandardScaler()
+        X_train = sc.fit_transform(X_train)
+        X_test = sc.transform(X_test)
         
+        for k in range(1,100):
+            knn_classifier = KNeighborsClassifier(n_neighbors = k)
+            knn_classifier.fit(X_train, y_train)
+            knn_scores.append(knn_classifier.score(X_test, y_test))
+
+        # ind = np.argmax(knn_scores)
+        # columnList1.append(i[0])
+        # columnList2.append(i[1])
+            
+        classifier = KNeighborsClassifier(n_neighbors = ind+1, metric = 'minkowski', p = 2)
+        classifier.fit(X_train, y_train)
+
+            # Predicting the Test set results
+        y_pred = classifier.predict(X_test)
+    
+        # calculate accuracy
+        scoring = (metrics.accuracy_score(y_test, y_pred))
+            
+        columnList1.append(i[0])
+        columnList2.append(i[1])
+        scoringList.append(scoring)
+
+    ind = np.argmax(scoringList)
+
+    freq = Counter(scoringList)
+    finalColumns = np.where(scoringList == scoringList[0])
+
+
+
+    
 def convertIndex(data, y):
     if not isinstance(y, int):
         for i in range(len(data)):
