@@ -108,7 +108,7 @@ classifier.fit(X_train, y_train)
 y_pred = classifier.predict(X_test)
 
 # calculate accuracy
-scoring = (metrics.accuracy_score(y_test, y_pred))cd
+scoring = (metrics.accuracy_score(y_test, y_pred))
 print(scoring)
 
 # Making the Confusion Matrix

@@ -55,7 +55,7 @@ def knn(file, y):
             knn_classifier.fit(X_train, y_train)
             knn_scores.append(knn_classifier.score(X_test, y_test))
 
-        # ind = np.argmax(knn_scores)
+        ind = np.argmax(knn_scores)
         # columnList1.append(i[0])
         # columnList2.append(i[1])
             
@@ -76,14 +76,15 @@ def knn(file, y):
 
     freq = Counter(scoringList)
     finalColumns = np.where(scoringList == scoringList[0])
+    print(finalColumns)
 
 
 
-    
+
 def convertIndex(data, y):
     if not isinstance(y, int):
         for i in range(len(data)):
-            if data.columns[i] == y:
+            if data[i] == y:
                 y = i
                 return y
         if not isinstance(y, int):
