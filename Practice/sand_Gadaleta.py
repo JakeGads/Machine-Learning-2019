@@ -1,4 +1,5 @@
 from knn import knn
 
 if __name__ == "__main__":
-    knn("Data/glass.csv", "RI", max_k=15, max_perm=2)
+    for i in range(10):
+        knn("Data/glass.csv", i, max_k=15, max_perm=3, supressText=True)

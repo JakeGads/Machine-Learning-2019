@@ -44,6 +44,24 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 """
 
 
+class Accuracy:
+    def __init__(self, X, y, accuracy_score):
+        self.X = X
+        self.y = y
+        self.accuracy_score = accuracy_score
+
+    def remake(self, X, y, accuracy_score):
+        self.X = X
+        self.y = y
+        self.accuracy_score = accuracy_score
+
+    def printable(self):
+        return f"""
+        X:{self.X}, y:{self.y}
+        score: {self.accuracy_score}
+        """
+
+
 def convert_index(data, y):
     if not isinstance(y, int):
         for i in range(len(data)):
@@ -57,7 +75,7 @@ def convert_index(data, y):
     return y
 
 
-def knn(file, y, max_k=100, max_perm=0):
+def knn(file, y, max_k=100, max_perm=0, supressText=False):
     # open loads and cleans data
     dataset = pd.read_csv(file)
     dataset = dataset.dropna()
@@ -66,28 +84,83 @@ def knn(file, y, max_k=100, max_perm=0):
     # Makes y and converts it to an index and applys it with the dataset
     # X is generated On The Fly
     y = convert_index(dataset.columns, y)
-    y = dataset.iloc[:, y]
+    y_loc = y
+    y = dataset.iloc[:, [y]]
     # getting my X's
     Xs = list(range(len(dataset.columns)))
 
     # generates permustions
     X_perms = []
     if not max_perm:
-        X_perms = permutations(Xs, max_perm)
-    else:
         for i in range(1, len(dataset.columns)):
-            X_perms.extend(permutations(Xs, max_perm))
+            X_perms = permutations(Xs, i)
+    else:
+        for i in range(1, max_perm + 1):
+            X_perms += list(permutations(Xs, i))
 
     del Xs  # doing this becuase we are already heavy on mem
 
     super_counter = 0
-
+    super_accuracy = Accuracy(0, 0, 0)
     for X_list in X_perms:
         X_list = list(X_list)
         X = dataset.iloc[:, X_list]
-        del X_list
-        
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+        super_counter += 1
+        sub_counter = 0
+
+        sub_accuracy = Accuracy(0, 0, 0)
+
+        for k in range(max_k):
+            if not supressText:
+                print(f"super: {100 * (super_counter / len(X_perms)):.2f}% sub: {100 * (k / max_k):.2f}%", end=" ")
+            knn_classifier = KNeighborsClassifier(n_neighbors=k)
+
+            try:
+                knn_classifier.fit(X_train, y_train)
+            except:
+                lab_enc = preprocessing.LabelEncoder()
+                try:
+                    X_train = lab_enc.fit_transform(X_train)
+                    X_test = lab_enc.fit_transform(X_test)
+                except:
+                    if not supressText:
+                        print("X is a nope", end=" ")
+                try:
+                    y_train = lab_enc.fit_transform(y_train)
+                    y_test = lab_enc.fit_transform(y_test)
+                except:
+                    if not supressText:
+                        print("y is a nope", end=" ")
+
+            try:
+                knn_classifier.fit(X_train, y_train)
+                y_pred = knn_classifier.predict(X_test)
+                current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
+
+                if current_accuracy > sub_accuracy.accuracy_score:
+                    sub_accuracy.remake(X_list, y_loc, current_accuracy)
+
+                if not supressText:
+                    print("Passed")
+
+            except:
+                sub_accuracy = Accuracy(0, 0, 0)
+                if not supressText:
+                    print("Failed")
+
+        if sub_accuracy.accuracy_score > super_accuracy.accuracy_score:
+            super_accuracy = sub_accuracy
+
+    print(super_accuracy.printable())
+
+    return super_accuracy
+
+
 # Wrote KNN functiality by hand to understand what was happening under the covers
+
 
 def euclidean_distance(row1, row2):
     distance = 0.0
