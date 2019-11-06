@@ -3,5 +3,6 @@
         "contourf",
         "numpy",
         "pyplot"
-    ]
+    ],
+    "python.pythonPath": "venv/bin/python3.7"
 }
