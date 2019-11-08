@@ -1,15 +1,11 @@
 import warnings
-from collections import Counter
 from itertools import permutations
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import sklearn
 from sklearn.exceptions import DataConversionWarning
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import StandardScaler
 import sklearn.preprocessing as preprocessing
 
 warnings.filterwarnings(action='ignore', category=DataConversionWarning)
@@ -61,6 +57,12 @@ class Accuracy:
         score: {self.accuracy_score}
         """
 
+    def writtable(self):
+        comb = "["
+        for i in self.X:
+            comb += str(i) + " "
+        comb += "]"
+        return f"{comb},{self.y},{self.accuracy_score:.2f}"
 
 def convert_index(data, y):
     if not isinstance(y, int):
@@ -75,7 +77,7 @@ def convert_index(data, y):
     return y
 
 
-def knn(file, y, max_k=100, max_perm=0, supressText=False):
+def knn(file, y, max_k=100, max_perm=0, supress_text=False):
     # open loads and cleans data
     dataset = pd.read_csv(file)
     dataset = dataset.dropna()
@@ -114,7 +116,7 @@ def knn(file, y, max_k=100, max_perm=0, supressText=False):
         sub_accuracy = Accuracy(0, 0, 0)
 
         for k in range(max_k):
-            if not supressText:
+            if not supress_text:
                 print(f"super: {100 * (super_counter / len(X_perms)):.2f}% sub: {100 * (k / max_k):.2f}%", end=" ")
             knn_classifier = KNeighborsClassifier(n_neighbors=k)
 
@@ -126,13 +128,13 @@ def knn(file, y, max_k=100, max_perm=0, supressText=False):
                     X_train = lab_enc.fit_transform(X_train)
                     X_test = lab_enc.fit_transform(X_test)
                 except:
-                    if not supressText:
+                    if not supress_text:
                         print("X is a nope", end=" ")
                 try:
                     y_train = lab_enc.fit_transform(y_train)
                     y_test = lab_enc.fit_transform(y_test)
                 except:
-                    if not supressText:
+                    if not supress_text:
                         print("y is a nope", end=" ")
 
             try:
@@ -143,12 +145,12 @@ def knn(file, y, max_k=100, max_perm=0, supressText=False):
                 if current_accuracy > sub_accuracy.accuracy_score:
                     sub_accuracy.remake(X_list, y_loc, current_accuracy)
 
-                if not supressText:
+                if not supress_text:
                     print("Passed")
 
             except:
                 sub_accuracy = Accuracy(0, 0, 0)
-                if not supressText:
+                if not supress_text:
                     print("Failed")
 
         if sub_accuracy.accuracy_score > super_accuracy.accuracy_score:
