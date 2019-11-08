@@ -3,10 +3,10 @@ from itertools import permutations
 
 import pandas as pd
 import sklearn
+import sklearn.preprocessing as preprocessing
 from sklearn.exceptions import DataConversionWarning
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-import sklearn.preprocessing as preprocessing
 
 warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -52,10 +52,7 @@ class Accuracy:
         self.accuracy_score = accuracy_score
 
     def printable(self):
-        return f"""
-        X:{self.X}, y:{self.y}
-        score: {self.accuracy_score}
-        """
+        return f"X:{self.X}, y:{self.y} score: {self.accuracy_score}"
 
     def writtable(self):
         comb = "["
@@ -111,7 +108,6 @@ def knn(file, y, max_k=100, max_perm=0, supress_text=False):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
         super_counter += 1
-        sub_counter = 0
 
         sub_accuracy = Accuracy(0, 0, 0)
 

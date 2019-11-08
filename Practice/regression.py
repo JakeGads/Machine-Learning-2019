@@ -13,7 +13,6 @@ import sklearn.preprocessing as preprocessing
 warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-from knn import Accuracy
 from knn import convert_index
 
 from sklearn.preprocessing import PolynomialFeatures
@@ -88,3 +87,36 @@ def poly_regression(X_loc, y_loc, file, max_degree=10, supress_text=False):
 
     print(super_accuracy.printable())
     return super_accuracy
+
+
+def linears_regression(X_loc, y_loc, file, max_degree=10, supress_text=False):
+
+    # prepares the file
+    dataset = pd.read_csv(file)
+    dataset = dataset.dropna()
+    dataset = dataset.reset_index(drop=True)
+
+    # sets my indicies
+    X_loc = convert_index(dataset.columns, X_loc)
+    y_loc = convert_index(dataset.columns, y_loc)
+
+    # generate the data
+    if not isinstance(X_loc, list):
+        X_loc = [X_loc]
+    if not isinstance(y_loc, list):
+        y_loc = [y_loc]
+    X = dataset.iloc[:, X_loc]
+    y = dataset.iloc[:, y_loc]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+    regr = LinearRegression()
+
+    regr.fit(X_train, y_train)
+    y_pred = regr.predict(X_test)
+
+    mean_squared_error(y_test, y_pred)
+    a = Accuracy(x_loc, y_loc, 0, r2_score(y_test, y_pred))
+    return a
+
+
