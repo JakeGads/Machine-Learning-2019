@@ -116,7 +116,42 @@ def linears_regression(X_loc, y_loc, file, max_degree=10, supress_text=False):
     y_pred = regr.predict(X_test)
 
     mean_squared_error(y_test, y_pred)
-    a = Accuracy(x_loc, y_loc, 0, r2_score(y_test, y_pred))
+    a = Accuracy(X_loc, y_loc, 0, r2_score(y_test, y_pred))
     return a
 
 
+def multiple_regression(X_locs, y_loc, file, max_degree=10, supress_text=False):
+
+    # prepares the file
+    dataset = pd.read_csv(file)
+    dataset = dataset.dropna()
+    dataset = dataset.reset_index(drop=True)
+
+    # sets my indicies
+    if isinstance(X_locs, list):
+        for loc in range(X_locs):
+            X_locs[loc] = convert_index(dataset.columns, X_locs[loc])
+    else:
+        X_locs = convert_index(dataset.columns, X_locs)
+
+    y_loc = convert_index(dataset.columns, y_loc)
+
+    # generate the data
+    if not isinstance(X_locs, list):
+        X_locs = [X_locs]
+    if not isinstance(y_loc, list):
+        y_loc = [y_loc]
+        
+    X = dataset.iloc[:, X_locs]
+    y = dataset.iloc[:, y_loc]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+    regr = LinearRegression()
+
+    regr.fit(X_train, y_train)
+    y_pred = regr.predict(X_test)
+
+    mean_squared_error(y_test, y_pred)
+    a = Accuracy(X_locs, y_loc, 0, r2_score(y_test, y_pred))
+    return a
