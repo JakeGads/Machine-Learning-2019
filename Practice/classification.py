@@ -102,20 +102,28 @@ def knn(file, y, max_k=100, max_perm=0, supress_text=False):
     super_counter = 0
     super_accuracy = Accuracy(0, 0, 0)
     for X_list in X_perms:
+        # ensures that we have a list
         X_list = list(X_list)
+        # make it the dataset
         X = dataset.iloc[:, X_list]
 
+        # training the model
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
+        # to hold precentage 
         super_counter += 1
 
+        # a defualted accuracry with a minal set of 0
         sub_accuracy = Accuracy(0, 0, 0)
 
-        for k in range(max_k):
-            if not supress_text:
+        # loops through all my possible ks
+        for k in range(max_k + 1):
+            if not supress_text: # if you selected to allow text prints out the super and sup percentage
                 print(f"super: {100 * (super_counter / len(X_perms)):.2f}% sub: {100 * (k / max_k):.2f}%", end=" ")
+            # classifies with the current k as a value
             knn_classifier = KNeighborsClassifier(n_neighbors=k)
 
+            # try catch chain to trainsforms when needed, if it fails it will let you know
             try:
                 knn_classifier.fit(X_train, y_train)
             except:
@@ -133,27 +141,27 @@ def knn(file, y, max_k=100, max_perm=0, supress_text=False):
                     if not supress_text:
                         print("y is a nope", end=" ")
 
+            # trys to refit predic and then calculate the accuracy
             try:
                 knn_classifier.fit(X_train, y_train)
                 y_pred = knn_classifier.predict(X_test)
                 current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
 
-                if current_accuracy > sub_accuracy.accuracy_score:
+                if current_accuracy > sub_accuracy.accuracy_score: # checks to see if the new accuarcy is bigger than the largest and reassings if it is 
                     sub_accuracy.remake(X_list, y_loc, current_accuracy)
 
                 if not supress_text:
                     print("Passed")
 
             except:
-                sub_accuracy = Accuracy(0, 0, 0)
                 if not supress_text:
                     print("Failed")
-
+        # checks to see if the accuracy for that perm is getter than the overall accuracy
         if sub_accuracy.accuracy_score > super_accuracy.accuracy_score:
             super_accuracy = sub_accuracy
-
+    # prints the score
     print(super_accuracy.printable())
-
+    # returns it, for writing
     return super_accuracy
 
 

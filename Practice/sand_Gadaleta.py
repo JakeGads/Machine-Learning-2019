@@ -1,4 +1,4 @@
-from knn import knn
+from classification import knn
 from regression import poly_regression
 
 if __name__ == "__main__":
