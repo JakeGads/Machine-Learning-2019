@@ -15,29 +15,6 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 1. Classification (RI)
 2. Regression
 """
-"""
-        try:
-            knn_classifier.fit(X_train, y_train)
-        except:
-            lab_enc = preprocessing.LabelEncoder()
-            try:
-                X_train = lab_enc.fit_transform(X_train)
-                X_test = lab_enc.fit_transform(X_test)
-            except:
-                None
-            try:
-                y_train = lab_enc.fit_transform(y_train)
-                y_test = lab_enc.fit_transform(y_test)
-            except:
-                None
-        try:
-            knn_classifier.fit(X_train, y_train)
-            knn_scores.append(knn_classifier.score(X_test, y_test))
-            print("\t\tPassed")
-        except:
-            knn_scores.append(0.0)
-            print("Failed")
-"""
 
 
 class Accuracy:
@@ -74,7 +51,103 @@ def convert_index(data, y):
     return y
 
 
-def knn(file, y, max_k=100, max_perm=0, supress_text=False):
+def knn_definedTestSplit(test_file, train_file, y, max_k = 100, max_perm = 3, supress_text = False):
+    # open loads and cleans data
+    test_dataset = pd.read_csv(test_file)
+    test_dataset = test_dataset.dropna()
+    test_dataset = test_dataset.reset_index(drop=True)
+
+    train_dataset = pd.read_csv(train_file)
+    train_dataset = train_dataset.dropna()
+    train_dataset = train_dataset.reset_index(drop=True)
+
+     # Makes y and converts it to an index and applys it with the dataset
+    # X is generated On The Fly
+    y = convert_index(dataset.columns, y)
+    y_loc = y
+    test_y = test_dataset.iloc[:, [y]]
+    train_y = train_dataset.iloc[:, [y]]
+
+    # getting my X's
+    Xs = list(range(len(dataset.columns)))
+
+    # generates permustions
+    X_perms = []
+    if not max_perm:
+        for i in range(1, len(dataset.columns)):
+            X_perms = permutations(Xs, i)
+    else:
+        for i in range(1, max_perm + 1):
+            X_perms += list(permutations(Xs, i))
+
+    del Xs  # doing this becuase we are already heavy on mem
+
+    super_counter = 0
+    super_accuracy = Accuracy(0, 0, 0)
+    for X_list in X_perms:
+        # ensures that we have a list
+        X_list = list(X_list)
+        # make it the dataset
+        test_X = test_dataset.iloc[:, X_list]
+        train_X = train_dataset.iloc[:, X_list]
+
+        # to hold precentage 
+        super_counter += 1
+
+        # a defualted accuracry with a minal set of 0
+        sub_accuracy = Accuracy(0, 0, 0)
+
+        # loops through all my possible ks
+        for k in range(max_k + 1):
+            if not supress_text: # if you selected to allow text prints out the super and sup percentage
+                print(f"super: {100 * (super_counter / len(X_perms)):.2f}% sub: {100 * (k / max_k):.2f}%", end=" ")
+            # classifies with the current k as a value
+            knn_classifier = KNeighborsClassifier(n_neighbors=k)
+
+            # try catch chain to trainsforms when needed, if it fails it will let you know
+            try:
+                knn_classifier.fit(train_X, train_y)
+            except:
+                lab_enc = preprocessing.LabelEncoder()
+                try:
+                    X_train = lab_enc.fit_transform(X_train)
+                    X_test = lab_enc.fit_transform(X_test)
+                except:
+                    if not supress_text:
+                        print("X is a nope", end=" ")
+                try:
+                    y_train = lab_enc.fit_transform(y_train)
+                    y_test = lab_enc.fit_transform(y_test)
+                except:
+                    if not supress_text:
+                        print("y is a nope", end=" ")
+
+            # trys to refit predic and then calculate the accuracy
+            try:
+                knn_classifier.fit(X_train, y_train)
+                y_pred = knn_classifier.predict(X_test)
+                current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
+
+                if current_accuracy > sub_accuracy.accuracy_score: # checks to see if the new accuarcy is bigger than the largest and reassings if it is 
+                    sub_accuracy.remake(X_list, y_loc, current_accuracy)
+
+                if not supress_text:
+                    print("Passed")
+
+            except:
+                if not supress_text:
+                    print("Failed")
+        # checks to see if the accuracy for that perm is getter than the overall accuracy
+        if sub_accuracy.accuracy_score > super_accuracy.accuracy_score:
+            super_accuracy = sub_accuracy
+    # prints the score
+    print(super_accuracy.printable())
+    # returns it, for writing
+    return super_accuracy
+
+
+
+def knn(file, y, max_k=100, max_perm=3, supress_text=False):
     # open loads and cleans data
     dataset = pd.read_csv(file)
     dataset = dataset.dropna()
