@@ -19,7 +19,7 @@ warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-from classification import knn
+from classification import knn, 
 from regression import poly_regression, multiple_regression, linears_regression
 
 def q1(Xs):
@@ -29,37 +29,57 @@ def q1(Xs):
 
     X = dataset.iloc[:, Xs]
     y = dataset.iloc[:, [17]]
+    X_perms = []
+    
+    
+    for i in range(1, len(Xs)):
+        X_perms = permutations(Xs, i)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
-    for k in range(15 + 1):
-        knn_classifier = KNeighborsClassifier(n_neighbors=k)
+    del Xs  # doing this becuase we are already heavy on mem
 
-        # try catch chain to trainsforms when needed, if it fails it will let you know
+    for X_list in X_perms:
         try:
-            knn_classifier.fit(X_train, y_train)
+            # ensures that we have a list
+            X_list = list(X_list)
         except:
-            lab_enc = preprocessing.LabelEncoder()
-            try:
-                X_train = lab_enc.fit_transform(X_train)
-                X_test = lab_enc.fit_transform(X_test)
-            except:
-                None
-            try:
-                y_train = lab_enc.fit_transform(y_train)
-                y_test = lab_enc.fit_transform(y_test)
-            except:
-                None
+            None
+            
+        # make it the dataset
+        X = dataset.iloc[:, X_list]
+    
+        # training the model
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+        print("testing the set")
+        for k in range(15 + 1):
+            knn_classifier = KNeighborsClassifier(n_neighbors=k)
 
-        try:
-            knn_classifier.fit(X_train, y_train)
-            y_pred = knn_classifier.predict(X_test)
-        
-            current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
-        except:
-            current_accuracy = 0
+            # try catch chain to trainsforms when needed, if it fails it will let you know
+            try:
+                knn_classifier.fit(X_train, y_train)
+            except:
+                lab_enc = preprocessing.LabelEncoder()
+                try:
+                    X_train = lab_enc.fit_transform(X_train)
+                    X_test = lab_enc.fit_transform(X_test)
+                except:
+                    None
+                try:
+                    y_train = lab_enc.fit_transform(y_train)
+                    y_test = lab_enc.fit_transform(y_test)
+                except:
+                    None
 
-        print(current_accuracy)
+            try:
+                knn_classifier.fit(X_train, y_train)
+                y_pred = knn_classifier.predict(X_test)
+            
+                current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
+            except:
+                current_accuracy = 0
+
+            print(X_list, current_accuracy)
+
 
 if __name__ == "__main__":
     # data headers

@@ -187,7 +187,7 @@ def knn(file, y, Xs = [], max_k=100, max_perm=3, supress_text=False):
             
         # make it the dataset
         X = dataset.iloc[:, X_list]
-       
+    
         # training the model
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 

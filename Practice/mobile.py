@@ -1,4 +1,4 @@
-"""
+""" 
 Does battery and talk time affect the price of the phone?
 
 Does memory (all types) affect the price of the phone?
