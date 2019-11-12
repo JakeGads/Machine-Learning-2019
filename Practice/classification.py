@@ -147,7 +147,7 @@ def knn_definedTestSplit(test_file, train_file, y, max_k = 100, max_perm = 3, su
 
 
 
-def knn(file, y, max_k=100, max_perm=3, supress_text=False):
+def knn(file, y, Xs = [], max_k=100, max_perm=3, supress_text=False):
     # open loads and cleans data
     dataset = pd.read_csv(file)
     dataset = dataset.dropna()
@@ -158,28 +158,36 @@ def knn(file, y, max_k=100, max_perm=3, supress_text=False):
     y = convert_index(dataset.columns, y)
     y_loc = y
     y = dataset.iloc[:, [y]]
-    # getting my X's
-    Xs = list(range(len(dataset.columns)))
+    if Xs == []:
+        # getting my X's
+        Xs = list(range(len(dataset.columns)))
 
-    # generates permustions
-    X_perms = []
-    if not max_perm:
-        for i in range(1, len(dataset.columns)):
-            X_perms = permutations(Xs, i)
+        # generates permustions
+        
+        X_perms = []
+        if not max_perm:
+            for i in range(1, len(dataset.columns)):
+                X_perms = permutations(Xs, i)
+        else:
+            for i in range(1, max_perm + 1):
+                X_perms += list(permutations(Xs, i))
+
+        del Xs  # doing this becuase we are already heavy on mem
     else:
-        for i in range(1, max_perm + 1):
-            X_perms += list(permutations(Xs, i))
-
-    del Xs  # doing this becuase we are already heavy on mem
-
+        X_perms = Xs
+    
     super_counter = 0
     super_accuracy = Accuracy(0, 0, 0)
     for X_list in X_perms:
-        # ensures that we have a list
-        X_list = list(X_list)
+        try:
+            # ensures that we have a list
+            X_list = list(X_list)
+        except:
+            None
+            
         # make it the dataset
         X = dataset.iloc[:, X_list]
-
+       
         # training the model
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 

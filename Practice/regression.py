@@ -13,7 +13,7 @@ import sklearn.preprocessing as preprocessing
 warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-from knn import convert_index
+from classification import convert_index
 
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
@@ -87,7 +87,6 @@ def poly_regression(X_loc, y_loc, file, max_degree=10, supress_text=False):
 
     print(super_accuracy.printable())
     return super_accuracy
-
 
 def linears_regression(X_loc, y_loc, file, max_degree=10, supress_text=False):
 
