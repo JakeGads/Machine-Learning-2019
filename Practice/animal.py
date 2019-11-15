@@ -70,7 +70,7 @@ def q1(Xs):
     
         # training the model
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-        for k in range(15 + 1):
+        for k in range(100 + 1):
             knn_classifier = KNeighborsClassifier(n_neighbors=k)
 
             # try catch chain to trainsforms when needed, if it fails it will let you know
@@ -112,10 +112,12 @@ if __name__ == "__main__":
     # Does the class type depend on the byproducts (eggs,  milk) of an animal?
     
     print("Feather and Eggs")
-    print(q1([3,4])) # ~ 0.6774193548387096
+    print(q1([3,4])) # X:[4, 3], y:17, k:6, score: 0.6774193548387096
+
     # Does the class type depend on the physical features (hair, feathers, toothed, backbone, fins, legs, tail) of an animal? 
     print("\n\n\nhair, feathers, toothed, backbone, fins, legs, tail")
-    print(q1([1,2, 8, 9, 12, 13, 14]))
+    print(q1([1,2, 8, 9, 12, 13, 14])) # X:[13, 1, 14, 9], y:17, k:1, score: 1.0
     # Is the class type defined by the predator and venomous nature of the animal?
     print("\n\npredator and venomous")
-    print(q1([7,11]))
+    print(q1([7,11])) # X:[7, 11], y:17, k:1, score: 0.4838709677419355
+
