@@ -19,24 +19,44 @@ warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-from classification import knn, 
-from regression import poly_regression, multiple_regression, linears_regression
+class Accuracy:
+    def __init__(self, X, y, k, accuracy_score):
+        self.X = X
+        self.y = y
+        self.k = k
+        self.accuracy_score = accuracy_score
+
+    def remake(self, X, y, k, accuracy_score):
+        self.X = X
+        self.y = y
+        self.k = k
+        self.accuracy_score = accuracy_score
+
+    def printable(self):
+        return f"X:{self.X}, y:{self.y}, k:{self.k}, score: {self.accuracy_score}"
+
+    def writtable(self):
+        comb = "["
+        for i in self.X:
+            comb += str(i) + " "
+        comb += "]"
+        return f"{comb},{self.y},{self.k}, {self.accuracy_score:.2f}"
+
 
 def q1(Xs):
     dataset = pd.read_csv(file)
     dataset = dataset.dropna()
     dataset = dataset.reset_index(drop=True)
 
-    X = dataset.iloc[:, Xs]
     y = dataset.iloc[:, [17]]
     X_perms = []
-    
-    
-    for i in range(1, len(Xs)):
-        X_perms = permutations(Xs, i)
 
+    for i in range(len(Xs) + 1):
+        X_perms.extend(list(permutations(Xs, i)))
 
     del Xs  # doing this becuase we are already heavy on mem
+
+    highAccuracy = Accuracy(0, 0, 0, 0)
 
     for X_list in X_perms:
         try:
@@ -50,7 +70,6 @@ def q1(Xs):
     
         # training the model
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-        print("testing the set")
         for k in range(15 + 1):
             knn_classifier = KNeighborsClassifier(n_neighbors=k)
 
@@ -71,14 +90,18 @@ def q1(Xs):
                     None
 
             try:
+
                 knn_classifier.fit(X_train, y_train)
+
                 y_pred = knn_classifier.predict(X_test)
-            
                 current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
+
             except:
                 current_accuracy = 0
 
-            print(X_list, current_accuracy)
+            if current_accuracy > highAccuracy.accuracy_score:
+                highAccuracy.remake(X_list, 17, k, current_accuracy)
+    return highAccuracy.printable()
 
 
 if __name__ == "__main__":
@@ -89,8 +112,10 @@ if __name__ == "__main__":
     # Does the class type depend on the byproducts (eggs,  milk) of an animal?
     
     print("Feather and Eggs")
-    q1([3,4]) # ~ 0.6774193548387096
+    print(q1([3,4])) # ~ 0.6774193548387096
     # Does the class type depend on the physical features (hair, feathers, toothed, backbone, fins, legs, tail) of an animal? 
     print("\n\n\nhair, feathers, toothed, backbone, fins, legs, tail")
-    q1([1,2, 8, 9, 12, 13, 14])
+    print(q1([1,2, 8, 9, 12, 13, 14]))
     # Is the class type defined by the predator and venomous nature of the animal?
+    print("\n\npredator and venomous")
+    print(q1([7,11]))

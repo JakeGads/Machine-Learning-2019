@@ -4,10 +4,10 @@ from regression import poly_regression
 if __name__ == "__main__":
 
     file = open('knn.csv', 'w+')
-    file.write("X(s),y,score")
+    file.write("X(s),y,score\n")
     for i in range(10):
         # knn(file, y, max_k=100, max_perm=0, supress_text=False):
-        high = knn("Data/glass.csv", i, max_k=30, max_perm=3)
+        high = knn("Data/glass.csv", i, max_k=30, max_perm=3, supress_text=True)
         file.write(high.writtable() + '\n')
     file.close()
 
