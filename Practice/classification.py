@@ -39,7 +39,7 @@ class Accuracy:
             for i in self.X:
                 comb += str(i) + " "
         except:
-            comb += str(i)
+            comb += str(self.X)
         comb += "]"
         return f"{comb},{self.y},{self.k}, {self.accuracy_score:.2f}"
 
