@@ -105,6 +105,8 @@ def q1(Xs):
 
 
 if __name__ == "__main__":
+    # @Dr Gupta, this will take a while to run there is no need to do it on your end
+
     # data headers
     # ZOO
         # animal_name,hair,feathers,eggs,milk,airborne,aquatic,predator,toothed,backbone,breathes,venomous,fins,legs,tail domestic,catsize,class_type
