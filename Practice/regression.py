@@ -86,7 +86,7 @@ def poly_regression(X_loc, y_loc, file, max_degree=10, supress_text=False):
             super_accuracy = sub_accuracy
 
     print(super_accuracy.printable())
-    return super_accuracy
+
 
 def linears_regression(X_loc, y_loc, file, max_degree=10, supress_text=False):
 
