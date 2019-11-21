@@ -4,15 +4,18 @@ Apply all classification models to the titanic dataset
 Question - Does sex, siblings, fare, embarked and who is traveling decide the class of that travel.
 """
 
-import warnings
-from itertools import permutations
-
 import pandas as pd
-import sklearn
-import sklearn.preprocessing as preprocessing
-from sklearn.exceptions import DataConversionWarning
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+from sklearn import metrics
+from sklearn.tree import DecisionTreeClassifier
+
+import warnings
+warnings.filterwarnings("ignore")  # suppresses all warning
 
 
 class Accuracy:
@@ -29,7 +32,7 @@ class Accuracy:
         self.accuracy_score = accuracy_score
 
     def printable(self):
-        return f"X:{self.X}, y:{self.y}, k:{self.k}, score: {self.accuracy_score}"
+        return f"X:{self.X}, y:{self.y}, k:{self.k}, score: ~{self.accuracy_score}"
 
     def writtable(self):
         comb = "["
@@ -106,13 +109,77 @@ def knn(file, ys, Xs, max_k=100, supress_text=False):
         if knn_accuracy > accuracy.accuracy_score:
             accuracy.remake(Xs, ys, k, knn_accuracy)
 
-    print(accuracy.printable())
+    return accuracy.printable()
+
+
+def logistic_regression(file, ys, Xs):
+    dataset = clean_dataset(file)
+
+    X = dataset.iloc[:, Xs]
+    y = dataset.iloc[:, ys]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+    # def __init__(self, X, y, k, accuracy_score):
+    accuracy = Accuracy(0, 0, 0, 0)
+
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
+
+    classifier = LogisticRegression(random_state=0)
+    classifier.fit(X_train, y_train)
+
+    y_pred = classifier.predict(X_test)
+    cm = confusion_matrix(y_test, y_pred)
+    scoring = metrics.accuracy_score(y_test, y_pred)
+
+    accuracy = Accuracy(Xs, ys, 0, scoring)
+
+    return accuracy.printable()
+
+
+def decision_tree(file, ys, Xs):
+    dataset = clean_dataset(file)
+
+    X = dataset.iloc[:, Xs]
+    y = dataset.iloc[:, ys]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+    classifier = DecisionTreeClassifier(criterion='entropy',
+                                        random_state=0)  # Entropy is nothing but the measure of disorder.
+    classifier.fit(X_train, y_train)
+
+    y_pred = classifier.predict(X_test)
+
+    acc = Accuracy(Xs, ys, 0, metrics.accuracy_score(y_test, y_pred))
+
+    return acc.printable()
+
+
+def random_forrest(file, ys, Xs):
+    dataset = clean_dataset(file)
+
+    X = dataset.iloc[:, Xs]
+    y = dataset.iloc[:, ys]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+    classifier = RandomForestClassifier(n_estimators=600, max_depth=300, max_features='sqrt')
+    classifier.fit(X_train, y_train)
+
+    y_pred = classifier.predict(X_test)
+
+    acc = Accuracy(Xs, ys, 0, metrics.accuracy_score(y_test, y_pred))
+
+    return acc.printable()
 
 
 if __name__ == "__main__":
     # survived,pclass,sex,age,sibsp,parch,fare,embarked,classV,who,adult_male,deck,embark_town,alive,alone
-    columns = ["survived", "pclass", "sex","age", "sibsp", "parch", "fare", "embarked", "classV", "who", "adult_male",
-               "deck","embark_town","alive","alone"]
+    columns = ["survived", "pclass", "sex", "age", "sibsp", "parch", "fare", "embarked", "classV", "who", "adult_male",
+               "deck", "embark_town", "alive", "alone"]
     x = [
         columns.index("sex"),
         columns.index("sibsp"),
@@ -125,5 +192,9 @@ if __name__ == "__main__":
 
     file = "Data/titanic.csv"
 
-    knn(file, y, x)  # X:[2, 4, 6, 7, 9], y:[1], k:2, score: 0.967032967032967
-
+    print(f"""
+    K Nearest Neighbor:\t\t{knn(file, y, x)}
+    Logistic Regression:\t{logistic_regression(file, y, x)}
+    Decision Tree:\t\t\t{decision_tree(file, y, x)}
+    Random Forest:\t\t\t{random_forrest(file, y, x)}
+    """)
