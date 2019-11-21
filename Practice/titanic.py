@@ -14,6 +14,7 @@ from sklearn.exceptions import DataConversionWarning
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
+
 class Accuracy:
     def __init__(self, X, y, k, accuracy_score):
         self.X = X
@@ -40,8 +41,8 @@ class Accuracy:
         comb += "]"
         return f"{comb},{self.y},{self.k}, {self.accuracy_score:.2f}"
 
-def knn(file, y, Xs, max_k=100, supress_text=False):
-    # open loads and cleans data
+
+def clean_dataset(file):
     dataset = pd.read_csv(file)
     dataset = dataset.dropna()
     dataset = dataset.reset_index(drop=True)
@@ -76,40 +77,34 @@ def knn(file, y, Xs, max_k=100, supress_text=False):
     dataset.alive = [alive[item] for item in dataset.alive]
     dataset.classV = [classV[item] for item in dataset.classV]
 
-    # Makes y and converts it to an index and applys it with the dataset
-    # X is generated On The Fly
+    return dataset
 
-    y_loc = y
-    y = dataset.iloc[:, y]
+
+def knn(file, ys, Xs, max_k=100, supress_text=False):
+    # open loads and cleans data
+    dataset = clean_dataset(file)
 
     X = dataset.iloc[:, Xs]
+    y = dataset.iloc[:, ys]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
 
+    # def __init__(self, X, y, k, accuracy_score):
     accuracy = Accuracy(0, 0, 0, 0)
 
-    for k in range(1, max_k + 1):
-        # classifies with the current k as a value
-        knn_classifier = KNeighborsClassifier(n_neighbors=k)
+    for k in range(1, max_k):
 
-        # trys to refit predic and then calculate the accuracy
-        try:
-            try:
-                knn_classifier.fit(X_train, y_train)
-            except:
-                knn_classifier.fit(X_train, y_train.values.ravel())
-            y_pred = knn_classifier.predict(X_test)
-            current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
+        knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
+        knn.fit(X_train, y_train.values.ravel())
+        # didn't like my list had to give it the ravel
 
-            if current_accuracy > accuracy.accuracy_score:  # checks to see if the new accuarcy is bigger than the largest and reassings if it is
-                accuracy.remake(Xs, y_loc, current_accuracy)
+        knn_accuracy = knn.score(X, y)
+        # handles outfitting
+        if knn_accuracy > .97:
+            continue
 
-            if not supress_text:
-                print("Passed")
-
-        except:
-            if not supress_text:
-                print("Failed")
+        if knn_accuracy > accuracy.accuracy_score:
+            accuracy.remake(Xs, ys, k, knn_accuracy)
 
     print(accuracy.printable())
 
@@ -130,5 +125,5 @@ if __name__ == "__main__":
 
     file = "Data/titanic.csv"
 
-    knn(file, y, x)
+    knn(file, y, x)  # X:[2, 4, 6, 7, 9], y:[1], k:2, score: 0.967032967032967
 
