@@ -18,25 +18,30 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 class Accuracy:
-    def __init__(self, X, y, accuracy_score):
+    def __init__(self, X, y, k, accuracy_score):
         self.X = X
         self.y = y
+        self.k = k
         self.accuracy_score = accuracy_score
 
-    def remake(self, X, y, accuracy_score):
+    def remake(self, X, y, k, accuracy_score):
         self.X = X
         self.y = y
+        self.k = k
         self.accuracy_score = accuracy_score
 
     def printable(self):
-        return f"X:{self.X}, y:{self.y} score: {self.accuracy_score}"
+        return f"X:{self.X}, y:{self.y}, k:{self.k}, score: {self.accuracy_score}"
 
     def writtable(self):
         comb = "["
-        for i in self.X:
-            comb += str(i) + " "
+        try:
+            for i in self.X:
+                comb += str(i) + " "
+        except:
+            comb += str(self.X)
         comb += "]"
-        return f"{comb},{self.y},{self.accuracy_score:.2f}"
+        return f"{comb},{self.y},{self.k}, {self.accuracy_score:.2f}"
 
 def convert_index(data, y):
     if not isinstance(y, int):
@@ -83,7 +88,7 @@ def knn_definedTestSplit(test_file, train_file, y, max_k = 100, max_perm = 3, su
     del Xs  # doing this becuase we are already heavy on mem
 
     super_counter = 0
-    super_accuracy = Accuracy(0, 0, 0)
+    super_accuracy = Accuracy(0, 0, 0, 0)
     for X_list in X_perms:
         # ensures that we have a list
         X_list = list(X_list)
@@ -95,7 +100,7 @@ def knn_definedTestSplit(test_file, train_file, y, max_k = 100, max_perm = 3, su
         super_counter += 1
 
         # a defualted accuracry with a minal set of 0
-        sub_accuracy = Accuracy(0, 0, 0)
+        sub_accuracy = Accuracy(0, 0, 0, 0)
 
         # loops through all my possible ks
         for k in range(max_k + 1):
@@ -129,7 +134,7 @@ def knn_definedTestSplit(test_file, train_file, y, max_k = 100, max_perm = 3, su
                 current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
 
                 if current_accuracy > sub_accuracy.accuracy_score: # checks to see if the new accuarcy is bigger than the largest and reassings if it is 
-                    sub_accuracy.remake(X_list, y_loc, current_accuracy)
+                    sub_accuracy.remake(X_list, y_loc, k, current_accuracy)
 
                 if not supress_text:
                     print("Passed")
@@ -177,7 +182,7 @@ def knn(file, y, Xs = [], max_k=100, max_perm=3, supress_text=False):
         X_perms = Xs
     
     super_counter = 0
-    super_accuracy = Accuracy(0, 0, 0)
+    super_accuracy = Accuracy(0, 0, 0, 0)
     for X_list in X_perms:
         try:
             # ensures that we have a list
@@ -195,7 +200,7 @@ def knn(file, y, Xs = [], max_k=100, max_perm=3, supress_text=False):
         super_counter += 1
 
         # a defualted accuracry with a minal set of 0
-        sub_accuracy = Accuracy(0, 0, 0)
+        sub_accuracy = Accuracy(0, 0, 0, 0)
 
         # loops through all my possible ks
         for k in range(max_k + 1):
