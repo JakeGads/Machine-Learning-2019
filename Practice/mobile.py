@@ -59,17 +59,11 @@ def polynomial(file, X_loc, y_loc, max_degree=20):
     if not isinstance(y_loc, list):
         y_loc = [y_loc]
 
-
     y = dataset.iloc[:, y_loc]
+    X = dataset.iloc[:, X_loc]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
-    X_perms = []
-
-    for i in range(1, len(dataset.columns)):
-        X_perms += [permutations(Xs, i)]
-
-    X = dataset.iloc[:, X_loc]
     for i in range(1, max_degree):
         polynomial_features = PolynomialFeatures(degree=i)
         X_poly = polynomial_features.fit_transform(X)
@@ -131,4 +125,10 @@ if __name__ == "__main__":
 
     # Does memory (all types) affect the price of the phone? regression
     # TODO figure out what is mem in our columns
+    two = [columns.index("int_memory"), columns.index("m_dep")]
+    print(f"""
+    Polynomial:\t{polynomial(file, two, price)}
+    Multiple:\t{linear_regression(file, two, price)}
+    """)
+
 
