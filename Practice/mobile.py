@@ -16,6 +16,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 import sklearn.preprocessing as preprocessing
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
 
 warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -57,11 +59,17 @@ def polynomial(file, X_loc, y_loc, max_degree=20):
     if not isinstance(y_loc, list):
         y_loc = [y_loc]
 
-    X = dataset.iloc[:, X_loc]
+
     y = dataset.iloc[:, y_loc]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
+    X_perms = []
+
+    for i in range(1, len(dataset.columns)):
+        X_perms += [permutations(Xs, i)]
+
+    X = dataset.iloc[:, X_loc]
     for i in range(1, max_degree):
         polynomial_features = PolynomialFeatures(degree=i)
         X_poly = polynomial_features.fit_transform(X)
@@ -103,8 +111,24 @@ def linear_regression(file, X_loc, y_loc):
 
 
 if __name__ == "__main__":
+    file = "Data/mobile-price-classification/train.csv"
+
     columns = [
         "battery_power", "blue", "clock_speed", "dual_sim", "fc", "four_g", "int_memory", "m_dep", "mobile_wt",
         "n_cores", "pc", "px_height", "px_width", "ram", "sc_h", "sc_w", "talk_time", "three_g", "touch_screen", "wifi",
         "price_range"
     ]
+
+    price = [columns.index("price_range")]
+
+    # Does battery and talk time affect the price of the phone? regression
+    one = [columns.index("battery_power"), columns.index("talk_time")]
+
+    print(f"""
+    Polynomial:\t{polynomial(file, one, price)}
+    Multiple:\t{linear_regression(file, one, price)}
+    """)
+
+    # Does memory (all types) affect the price of the phone? regression
+    # TODO figure out what is mem in our columns
+
