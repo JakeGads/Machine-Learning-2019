@@ -6,7 +6,10 @@ from itertools import permutations
 
 class KNNScore:
     def __init__(self, x, y, neighbors, score):
-        self.x = x
+        if isinstance(x, tuple):
+            self.x = str(x).replace(",", "")
+        else:
+            self.x = x
         self.y = y
         self.neighbors = neighbors
         self.score = score

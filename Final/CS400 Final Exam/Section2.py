@@ -16,7 +16,21 @@ an individual. Be mindful of overfitting and underfitting.
 """
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
 import data_help as dh
+
+
+def knn(data, x_s, y_name):
+    highest_score = dh.KNNScore(0, 0, 0, 0)
+
+    for x_name in x_s:
+        x = data.loc[:, x_name]
+        y = data.loc[:, y_name]
+
+
+
 
 
 if __name__ == "__main__":
