@@ -1,3 +1,4 @@
+from pandas.core.frame import DataFrame
 import sklearn
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -7,11 +8,10 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 import sklearn.metrics as metrics
 from sklearn.tree import DecisionTreeClassifier
-
 import data_help as dh
 
 
-def knn(data, x_s: list, y_name: str, max_k: int, out_file: str):
+def knn(data: DataFrame, x_s: list, y_name: str, max_k: int, out_file: str):
     highest_score = dh.ClassificationScores.KNNScore(0, 0, 0, 0)
     file = open(out_file, 'a+')
     for x_name in x_s:
@@ -20,7 +20,7 @@ def knn(data, x_s: list, y_name: str, max_k: int, out_file: str):
 
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
 
-        sub_accuracy = dh.KNNScore(0, 0, 0, 0)
+        sub_accuracy = dh.ClassificationScores.KNNScore(0, 0, 0, 0)
 
         for k in range(max_k + 1):
             knn_classifier = KNeighborsClassifier(n_neighbors=k)
@@ -29,9 +29,9 @@ def knn(data, x_s: list, y_name: str, max_k: int, out_file: str):
 
             y_pred = knn_classifier.predict(X_test)
 
-            current_accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
+            current_accuracy = metrics.accuracy_score(y_test, y_pred)
 
-            if current_accuracy > sub_accuracy.score:  # checks to see if the new accuarcy is bigger than the largest and reassings if it is
+            if current_accuracy > sub_accuracy.score:
                 sub_accuracy.__remake__(x_name, y_name, k, current_accuracy)
 
         file.write(sub_accuracy.__str__() + "\n")
@@ -47,7 +47,7 @@ def knn(data, x_s: list, y_name: str, max_k: int, out_file: str):
     return highest_score.__str__()
 
 
-def logistic_regression(data, x_s: list, y_name: str, out_file: str):
+def logistic_regression(data: DataFrame, x_s: list, y_name: str, out_file: str):
     file = open(out_file, 'a+')
     high_score = dh.ClassificationScores.GeneralClassificationScores(0, 0, 0)
 
@@ -55,7 +55,7 @@ def logistic_regression(data, x_s: list, y_name: str, out_file: str):
         x = data.loc[:, list(x_name)]
         y = data.loc[:, list(y_name)]
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
 
         sc = StandardScaler()
         X_train = sc.fit_transform(X_train)
@@ -66,13 +66,12 @@ def logistic_regression(data, x_s: list, y_name: str, out_file: str):
 
         y_pred = classifier.predict(X_test)
 
-        cm = confusion_matrix(y_test, y_pred)
-
         sub_score = dh.ClassificationScores.GeneralClassificationScores(
             x_name, y_name, metrics.accuracy_score(y_test, y_pred)
         )
 
         file.write(sub_score.__str__())
+
         if sub_score.score > high_score.score:
             high_score.__remake__(
                 sub_score.x,
@@ -84,7 +83,7 @@ def logistic_regression(data, x_s: list, y_name: str, out_file: str):
     return high_score.__str__()
 
 
-def decision_tree(data, x_s: list, y_name: str, out_file: str):
+def decision_tree(data: DataFrame, x_s: list, y_name: str, out_file: str):
     file = open(out_file, 'a+')
     high_score = dh.ClassificationScores.GeneralClassificationScores(0, 0, 0)
 
@@ -115,7 +114,7 @@ def decision_tree(data, x_s: list, y_name: str, out_file: str):
     return high_score.__str__()
 
 
-def random_forest(data, x_s: list, y_name: str, out_file: str):
+def random_forest(data: DataFrame, x_s: list, y_name: str, out_file: str):
     file = open(out_file, 'a+')
     high_score = dh.ClassificationScores.GeneralClassificationScores(0, 0, 0)
 
