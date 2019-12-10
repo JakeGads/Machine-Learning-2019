@@ -4,24 +4,42 @@ import numpy as np
 from itertools import permutations
 
 
-class KNNScore:
-    def __init__(self, x, y, neighbors, score):
-        if isinstance(x, tuple):
-            self.x = str(x).replace(",", "")
-        else:
+class ClassificationScores:
+    class KNNScore:
+        def __init__(self, x, y, neighbors, score):
+            if isinstance(x, tuple) or isinstance(x, list):
+                self.x = str(x).replace(",", "")
+            else:
+                self.x = x
+            self.y = y
+            self.neighbors = neighbors
+            self.score = score
+
+        def __remake__(self, x, y, neighbors, score):
             self.x = x
-        self.y = y
-        self.neighbors = neighbors
-        self.score = score
+            self.y = y
+            self.neighbors = neighbors
+            self.score = score
 
-    def __remake__(self, x, y, neighbors, score):
-        self.x = x
-        self.y = y
-        self.neighbors = neighbors
-        self.score = score
+        def __str__(self):
+            return f"{self.x}, {self.y}, {self.neighbors}, {self.score}"
 
-    def __str__(self):
-        return f"{self.x}, {self.y}, {self.neighbors}, {self.score}"
+    class GeneralClassificationScores:
+        def __init__(self, x, y, score):
+            if isinstance(x, tuple) or isinstance(x, list):
+                self.x = str(x).replace(",", "")
+            else:
+                self.x = x
+            self.y = y
+            self.score = score
+
+        def __remake__(self, x, y, score):
+            self.x = x
+            self.y = y
+            self.score = score
+
+        def __str__(self):
+            return f"{self.x}, {self.y}, {self.score}"
 
 
 def clean_data(file: str):
