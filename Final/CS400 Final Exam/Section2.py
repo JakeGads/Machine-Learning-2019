@@ -13,21 +13,22 @@ g. charges: Individual medical costs billed by health insurance
 Problem description: We have charges available reported for each insured person. Our objective is to forecast the
 charges billed to an individual. The task is to find which columns and which model can best predict the charges for
 an individual. Be mindful of overfitting and underfitting.
+
+Jake -
+This must be a classification problem as you will use data to predict future data, I will call all of my classification
+code
 """
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 
 import data_help as dh
 
 
 if __name__ == "__main__":
     data_set = dh.clean_data("Data/insurance.csv")
-
+    input(type(data_set))
     y = data_set['charges']
 
     x = dh.gen_permutations(data_set)
-    for i in x:
-        print(i)
+
+
+
 
