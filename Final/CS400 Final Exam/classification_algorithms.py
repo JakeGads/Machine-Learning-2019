@@ -1,8 +1,6 @@
 from pandas.core.frame import DataFrame
-import sklearn
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
@@ -10,13 +8,15 @@ import sklearn.metrics as metrics
 from sklearn.tree import DecisionTreeClassifier
 import data_help as dh
 
+import warnings
+
 
 def knn(data: DataFrame, x_s: list, y_name: str, max_k: int, out_file: str):
     highest_score = dh.ClassificationScores.KNNScore(0, 0, 0, 0)
     file = open(out_file, 'a+')
     for x_name in x_s:
         x = data.loc[:, list(x_name)]
-        y = data.loc[:, list(y_name)]
+        y = data.loc[:, [y_name]]
 
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
 
@@ -25,7 +25,10 @@ def knn(data: DataFrame, x_s: list, y_name: str, max_k: int, out_file: str):
         for k in range(max_k + 1):
             knn_classifier = KNeighborsClassifier(n_neighbors=k)
 
-            knn_classifier.fit(X_train, y_train)
+            try:
+                knn_classifier.fit(X_train, y_train)
+            except ValueError:
+                continue
 
             y_pred = knn_classifier.predict(X_test)
 
@@ -53,7 +56,7 @@ def logistic_regression(data: DataFrame, x_s: list, y_name: str, out_file: str):
 
     for x_name in x_s:
         x = data.loc[:, list(x_name)]
-        y = data.loc[:, list(y_name)]
+        y = data.loc[:, [y_name]]
 
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
 
@@ -62,8 +65,11 @@ def logistic_regression(data: DataFrame, x_s: list, y_name: str, out_file: str):
         X_test = sc.transform(X_test)
 
         classifier = LogisticRegression(random_state=0)
-        classifier.fit(X_train, y_train)
 
+        try:
+            classifier.fit(X_train, y_train)
+        except ValueError:
+            continue
         y_pred = classifier.predict(X_test)
 
         sub_score = dh.ClassificationScores.GeneralClassificationScores(
@@ -89,12 +95,15 @@ def decision_tree(data: DataFrame, x_s: list, y_name: str, out_file: str):
 
     for x_name in x_s:
         x = data.loc[:, list(x_name)]
-        y = data.loc[:, list(y_name)]
+        y = data.loc[:, [y_name]]
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
 
         classifier = DecisionTreeClassifier(criterion='entropy',
                                             random_state=0)  # Entropy is nothing but the measure of disorder.
-        classifier.fit(X_train, y_train)
+        try:
+            classifier.fit(X_train, y_train)
+        except ValueError:
+            continue
 
         y_pred = classifier.predict(X_test)
 
@@ -120,11 +129,15 @@ def random_forest(data: DataFrame, x_s: list, y_name: str, out_file: str):
 
     for x_name in x_s:
         x = data.loc[:, list(x_name)]
-        y = data.loc[:, list(y_name)]
+        y = data.loc[:, [y_name]]
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
 
         classifier = RandomForestClassifier(n_estimators=600, max_depth=300, max_features='sqrt')
-        classifier.fit(X_train, y_train)
+
+        try:
+            classifier.fit(X_train, y_train)
+        except ValueError:
+            continue
 
         y_pred = classifier.predict(X_test)
 

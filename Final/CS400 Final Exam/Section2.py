@@ -18,17 +18,24 @@ Jake -
 This must be a classification problem as you will use data to predict future data, I will call all of my classification
 code
 """
+import warnings
 
 import data_help as dh
-
+import classification_algorithms as ca
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore")
+
     data_set = dh.clean_data("Data/insurance.csv")
-    input(type(data_set))
+
     y = data_set['charges']
 
     x = dh.gen_permutations(data_set)
 
+    print(f"KNN:\t\t{ca.knn(data_set, x, 'charges', 100, 'out_files/2_knn.csv')} ")
+    print(f"LogReg:\t\t\t{ca.logistic_regression(data_set, x, 'charges', 'out_files/2_log.csv')}")
+    print(f"DecTree:\t\t{ca.decision_tree(data_set, x, 'charges', 'out_files/2_DecTree.csv')}")
+    print(f"RandFor:\t\t{ca.random_forest(data_set, x, 'charges', 'out_files/2_RandFor.csv')}")
 
 
 
