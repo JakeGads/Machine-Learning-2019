@@ -15,27 +15,32 @@ charges billed to an individual. The task is to find which columns and which mod
 an individual. Be mindful of overfitting and underfitting.
 
 Jake -
-This must be a classification problem as you will use data to predict future data, I will call all of my classification
+This must be a regression problem as you will use data to predict future data, I will call all of my classification
 code
 """
 import warnings
 
 import data_help as dh
-import classification_algorithms as ca
+import regression_algorithms as ra
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
 
     data_set = dh.clean_data("Data/insurance.csv")
 
-    y = data_set['charges']
+    y = 'charges'
 
     x = dh.gen_permutations(data_set)
 
-    print(f"KNN:\t\t{ca.knn(data_set, x, 'charges', 100, 'out_files/2_knn.csv')} ")
-    print(f"LogReg:\t\t\t{ca.logistic_regression(data_set, x, 'charges', 'out_files/2_log.csv')}")
-    print(f"DecTree:\t\t{ca.decision_tree(data_set, x, 'charges', 'out_files/2_DecTree.csv')}")
-    print(f"RandFor:\t\t{ca.random_forest(data_set, x, 'charges', 'out_files/2_RandFor.csv')}")
+    x_single = list(dh.permutations(data_set, 1))
+
+    print(
+        f"""
+        Linear:\t{ra.linear(data_set, x_single, y, "out_files/2_linear.csv")}
+        Multi:\t{ra.linear(data_set, x, y, "out_files/2multi.csv")}
+        Poly:\t{ra.polynomial(data_set, x, y, 100, "out_files/2poly.csv")}
+        """
+    )
 
 
 
