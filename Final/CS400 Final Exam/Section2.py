@@ -41,6 +41,3 @@ if __name__ == "__main__":
         Poly:\t{ra.polynomial(data_set, x, y, 100, "out_files/2poly.csv")}
         """
     )
-
-
-

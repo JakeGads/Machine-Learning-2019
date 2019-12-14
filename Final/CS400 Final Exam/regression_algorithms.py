@@ -1,7 +1,9 @@
 from pandas import DataFrame
+import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PolynomialFeatures
+from tqdm import tqdm
 
 import data_help as dh
 
@@ -11,7 +13,8 @@ def linear(data: DataFrame, x_s: list, y_name: str, out_file: str):
 
     file = open(out_file, 'a+')
 
-    for x_name in x_s:
+    for i in tqdm(range(len(x_s))):
+        x_name = x_s[i]
         x = data.loc[:, list(x_name)].values
         y = data.loc[:, [y_name]].values
 
@@ -20,7 +23,7 @@ def linear(data: DataFrame, x_s: list, y_name: str, out_file: str):
 
         score = dh.RegressionScores.GeneralRegressionScores(x_name, y_name, model.score(x, y))
 
-        file.write(score.__str__())
+        file.write(score.__str__() + "\n")
 
         if high_score.score < score.score:
             high_score.__remake__(score.x, score.y, score.score)
@@ -32,20 +35,21 @@ def linear(data: DataFrame, x_s: list, y_name: str, out_file: str):
 def polynomial(data: DataFrame, x_s: list, y_name: str, polys: int, out_file: str):
     high_score = dh.RegressionScores.PolyRegressionScores(-1, -1, -1, 0)
     file = open(out_file, "a+")
-    y = data[:, [y_name]].values
 
-    for x_name in x_s:
-        x = data.loc[:, x_name].values
-        
+    for i in tqdm(range(len(x_s))):
+        x_name = x_s[i]
+        x = data.loc[:, list(x_name)].values
+        y = data.loc[:, [y_name]].values
+
         X_train, X_test, y_train, y_test = train_test_split(
             x, y, test_size=.2, random_state=0
         )
 
-        for i in range(polys):
-            poly_reg = PolynomialFeatures(degree=i)
+        for h in range(polys):
+            poly_reg = PolynomialFeatures(degree=h)
 
             try:
-                X_ = poly_reg.fit_transform(X)
+                X_ = poly_reg.fit_transform(x)
                 X_test = poly_reg.fit_transform(X_test)
 
                 lin_reg = LinearRegression()
@@ -55,6 +59,8 @@ def polynomial(data: DataFrame, x_s: list, y_name: str, polys: int, out_file: st
 
                 if _score.score > .95:
                     continue
+
+                file.write(_score.__str__() + "\n")
 
                 if _score.score > high_score.score:
                     high_score.__remake__(_score.x, _score.y, _score.poly, _score.score)

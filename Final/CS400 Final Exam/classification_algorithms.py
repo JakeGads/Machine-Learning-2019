@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from pandas.core.frame import DataFrame
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -14,7 +15,9 @@ import warnings
 def knn(data: DataFrame, x_s: list, y_name: str, max_k: int, out_file: str):
     highest_score = dh.ClassificationScores.KNNScore(0, 0, 0, 0)
     file = open(out_file, 'a+')
-    for x_name in x_s:
+    for i in tqdm(range(len(x_s))):
+        x_name = x_s[i]
+
         x = data.loc[:, list(x_name)]
         y = data.loc[:, [y_name]]
 
@@ -54,7 +57,9 @@ def logistic_regression(data: DataFrame, x_s: list, y_name: str, out_file: str):
     file = open(out_file, 'a+')
     high_score = dh.ClassificationScores.GeneralClassificationScores(0, 0, 0)
 
-    for x_name in x_s:
+    for i in tqdm(range(len(x_s))):
+        x_name = x_s[i]
+
         x = data.loc[:, list(x_name)]
         y = data.loc[:, [y_name]]
 
@@ -93,7 +98,9 @@ def decision_tree(data: DataFrame, x_s: list, y_name: str, out_file: str):
     file = open(out_file, 'a+')
     high_score = dh.ClassificationScores.GeneralClassificationScores(0, 0, 0)
 
-    for x_name in x_s:
+    for i in tqdm(range(len(x_s))):
+        x_name = x_s[i]
+
         x = data.loc[:, list(x_name)]
         y = data.loc[:, [y_name]]
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
@@ -127,7 +134,8 @@ def random_forest(data: DataFrame, x_s: list, y_name: str, out_file: str):
     file = open(out_file, 'a+')
     high_score = dh.ClassificationScores.GeneralClassificationScores(0, 0, 0)
 
-    for x_name in x_s:
+    for i in tqdm(range(len(x_s))):
+        x_name = x_s[i]
         x = data.loc[:, list(x_name)]
         y = data.loc[:, [y_name]]
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
