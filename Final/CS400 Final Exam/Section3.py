@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Dataset: pda_data_no_dups.csv
 Dataset Description: This is a protein data set retrieved from Research Collaboratory for Structural Bioinformatics
@@ -11,4 +12,36 @@ world. This can make it both exciting and challenging to use the database in res
 Problem description: Which of these columns best predicts the “classification” of a protein: macromoleculeType,
 residueCount, resolution, structureMolecularWeight, densityMatthews, densityPercentSol, phValue. Be mindful of
 overfitting and underfitting.
+
+Columns structureId,classification,experimentalTechnique,macromoleculeType,residueCount,resolution,
+structureMolecularWeight,crystallizationMethod,crystallizationTempK,densityMatthews,densityPercentSol,pdbxDetails,
+phValue,publicationYear
 """
+
+import warnings
+import data_help as dh
+import classification_algorithms as ca
+
+if __name__ == "__main__":
+    warnings.filterwarnings("ignore")
+
+    data_set = dh.clean_data("Data/pdb_data_no_dups.csv")
+
+    y = 'classification'
+
+    x = ["macromoleculeType", "residueCount", "resolution", "structureMolecularWeight", \
+         "densityMatthews", "densityPercentSol", "phValue"]
+
+    scores = []
+
+    scores.append(ca.knn(data_set, x, y, 25, "None"))
+    scores.append(ca.decision_tree(data_set, x, y, "None"))
+    scores.append(ca.logistic_regression(data_set, x, y, "None"))
+    scores.append(ca.random_forest(data_set, x, y, "None"))
+
+    print(f"""
+    {scores[0]},\tKNN
+    {scores[1]},\tDecision Tree
+    {scores[2]}\tLogistic Regression
+    {scores[3]},\tRandom Forrest
+    """)

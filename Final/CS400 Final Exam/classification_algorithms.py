@@ -18,7 +18,11 @@ def knn(data: DataFrame, x_s: list, y_name: str, max_k: int, out_file: str):
     for i in tqdm(range(len(x_s))):
         x_name = x_s[i]
 
-        x = data.loc[:, list(x_name)]
+        if not isinstance(x_name, list):
+            x = data.loc[:, [x_name]]
+        else:
+            x = data.loc[:, list(x_name)]
+
         y = data.loc[:, [y_name]]
 
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
@@ -60,7 +64,11 @@ def logistic_regression(data: DataFrame, x_s: list, y_name: str, out_file: str):
     for i in tqdm(range(len(x_s))):
         x_name = x_s[i]
 
-        x = data.loc[:, list(x_name)]
+        if not isinstance(x_name, list):
+            x = data.loc[:, [x_name]]
+        else:
+            x = data.loc[:, list(x_name)]
+
         y = data.loc[:, [y_name]]
 
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
@@ -101,7 +109,11 @@ def decision_tree(data: DataFrame, x_s: list, y_name: str, out_file: str):
     for i in tqdm(range(len(x_s))):
         x_name = x_s[i]
 
-        x = data.loc[:, list(x_name)]
+        if not isinstance(x_name, list):
+            x = data.loc[:, [x_name]]
+        else:
+            x = data.loc[:, list(x_name)]
+
         y = data.loc[:, [y_name]]
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
 
@@ -136,7 +148,13 @@ def random_forest(data: DataFrame, x_s: list, y_name: str, out_file: str):
 
     for i in tqdm(range(len(x_s))):
         x_name = x_s[i]
-        x = data.loc[:, list(x_name)]
+
+        if not isinstance(x_name, list):
+            x = data.loc[:, [x_name]]
+        else:
+            x = data.loc[:, list(x_name)]
+
+
         y = data.loc[:, [y_name]]
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
 

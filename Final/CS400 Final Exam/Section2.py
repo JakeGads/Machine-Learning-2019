@@ -38,6 +38,6 @@ if __name__ == "__main__":
         f"""
         Linear:\t{ra.linear(data_set, x_single, y, "out_files/2_linear.csv")}
         Multi:\t{ra.linear(data_set, x, y, "out_files/2multi.csv")}
-        Poly:\t{ra.polynomial(data_set, x, y, 100, "out_files/2poly.csv")}
+        Poly:\t{ra.polynomial(data_set, x, y, 2, "out_files/2poly.csv")}
         """
     )

@@ -15,6 +15,10 @@ def linear(data: DataFrame, x_s: list, y_name: str, out_file: str):
 
     for i in tqdm(range(len(x_s))):
         x_name = x_s[i]
+
+        if y_name in list(x_name):
+            continue
+
         x = data.loc[:, list(x_name)].values
         y = data.loc[:, [y_name]].values
 
